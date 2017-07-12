@@ -4,7 +4,7 @@
   "description": "The ultimate standup app",
   "main": "index.js",
   "scripts": {
-    "postinstall": "(cd client && npm i) ; (cd server && npm i)",
+    "postinstall": "cd client && npm i && cd ../server && npm i",
     "compile-client": "cd client && tsc",
     "compile-server": "cd server && tsc",
     "compile": "npm run compile-client && npm run compile-server",
