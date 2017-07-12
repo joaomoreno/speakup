@@ -9,7 +9,7 @@
     "compile-server": "cd server && tsc",
     "compile": "npm run compile-client && npm run compile-server",
     "dev": "concurrently -n client,server,web -p name \"cd client && tsc --watch\" \"cd server && tsc --watch\" \"npm run web\"",
-    "web": "http-server"
+    "web": "nodemon server/server.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "concurrently": "^3.5.0",
     "http-server": "^0.10.0",
+    "nodemon": "^1.11.0",
     "systemjs": "^0.20.15",
     "typescript": "^2.4.1"
   }

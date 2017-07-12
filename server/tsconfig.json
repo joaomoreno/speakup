@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs"
+    "module": "commonjs",
+    "strictNullChecks": true,
+    "noUnusedLocals": true
   },
   "exclude": [
     "node_modules"
