@@ -24,7 +24,7 @@ export class Emitter<T> {
     return this._event.bind(this);
   }
 
-  fire(data: T): void {
+  fire(data?: T): void {
     this.listeners.forEach(listener => listener(data));
   }
 }

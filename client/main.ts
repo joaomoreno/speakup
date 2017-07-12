@@ -4,13 +4,20 @@ class Microphone {
 
   private context: AudioContext;
   private analyser: AnalyserNode;
+  private _sourceNode: MediaStreamAudioSourceNode;
+
+  get sourceNode(): MediaStreamAudioSourceNode { return this._sourceNode; }
   get frequencyBufferSize(): number { return this.analyser.frequencyBinCount; }
 
   private _onAudio = new Emitter<void>();
   get onAudio(): Event<void> { return this._onAudio.event; }
 
+  private _onReady = new Emitter<void>();
+  get onReady(): Event<void> { return this._onReady.event; }
+
   constructor() {
     this.context = new AudioContext();
+    console.log(this.context.sampleRate);
     this.analyser = this.context.createAnalyser();
     this.analyser.fftSize = 256;
 
@@ -18,8 +25,9 @@ class Microphone {
   }
 
   private setup(stream: MediaStream): void {
-    const mic = this.context.createMediaStreamSource(stream);
-    mic.connect(this.analyser);
+    this._sourceNode = this.context.createMediaStreamSource(stream);
+    this._sourceNode.connect(this.analyser);
+    this._onReady.fire();
   }
 
   getFloatFrequencyData(buffer: Float32Array): void {
@@ -75,3 +83,38 @@ function draw() {
 };
 
 draw();
+
+var saveData = (function () {
+  var a = document.createElement("a");
+  document.body.appendChild(a);
+  a.style = "display: none";
+  return function (blob, fileName) {
+    let url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+}());
+
+declare const WebAudioRecorder;
+
+mic.onReady(() => {
+  const recorder = new WebAudioRecorder(mic.sourceNode, {
+    workerDir: '/client/node_modules/web-audio-recorder-js/lib-minified/',
+    numChannels: 1
+  });
+
+  recorder.startRecording();
+
+  setTimeout(() => {
+    recorder.finishRecording();
+  }, 1000);
+
+  recorder.onComplete = (recorder, blob: Blob) => {
+    console.log(blob);
+    // const url = window.URL.createObjectURL(blob);
+    // window.location.assign(url);
+    // saveData(blob, 'hello.wav');
+  };
+})

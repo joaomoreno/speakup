@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "pathToMain",
   "dependencies": {
-    "systemjs": "^0.20.15"
+    "systemjs": "^0.20.15",
+    "web-audio-recorder-js": "0.0.2"
   }
 }
