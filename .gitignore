@@ -1,3 +1,4 @@
 node_modules
 client/**/*.js
 server/**/*.js
+devenv.json
