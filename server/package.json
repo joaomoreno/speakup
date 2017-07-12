@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "pathToMain",
   "dependencies": {
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "express-ws": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^8.0.10"
