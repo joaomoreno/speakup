@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Speakup</title>
 
-  <script src="/node_modules/systemjs/dist/system.js"></script>
+  <script src="/client/node_modules/systemjs/dist/system.js"></script>
   <script>
     System.config({
       baseURL: 'client',
@@ -16,10 +16,25 @@
 
     System.import('main');
   </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+
 </head>
 
 <body>
-  Hello there!
+  <canvas id="canvas" />
 </body>
 
 </html>

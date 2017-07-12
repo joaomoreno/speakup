@@ -2,5 +2,7 @@
   "name": "speakup-client",
   "version": "1.0.0",
   "main": "pathToMain",
-  "dependencies": {}
+  "dependencies": {
+    "systemjs": "^0.20.15"
+  }
 }
