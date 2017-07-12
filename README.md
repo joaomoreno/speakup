@@ -2,7 +2,7 @@
 
 The next-gen Standup app
 
-> Part of the Microsoft Zürich Development Center Hackathon 2017 event
+> Part of the [Microsoft Zürich Development Center Hackathon 2017](https://garagehackbox.azurewebsites.net/hackathons/1074/projects/65919) event
 
 ### Development Setup
 
@@ -10,7 +10,7 @@ The next-gen Standup app
 git clone git@github.com:joaomoreno/speakup.git
 cd speakup
 npm i
-npm run dev 
+npm run dev
 ```
 
 This should start compiling TypeScript in the background and serving the contents of
