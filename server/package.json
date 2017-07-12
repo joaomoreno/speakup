@@ -1,0 +1,9 @@
+{
+  "name": "speakup-server",
+  "version": "1.0.0",
+  "main": "pathToMain",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^8.0.10"
+  }
+}

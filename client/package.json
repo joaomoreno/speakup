@@ -1,0 +1,6 @@
+{
+  "name": "speakup-client",
+  "version": "1.0.0",
+  "main": "pathToMain",
+  "dependencies": {}
+}

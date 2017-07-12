@@ -4,9 +4,11 @@
   "description": "The ultimate standup app",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently -n typescript,web -p name \"npm run watch\" \"npm run web\"",
-    "compile": "cd src && tsc",
-    "watch": "cd src && tsc --watch",
+    "postinstall": "(cd client && npm i) ; (cd server && npm i)",
+    "compile-client": "cd client && tsc",
+    "compile-server": "cd server && tsc",
+    "compile": "npm run compile-client && npm run compile-server",
+    "dev": "concurrently -n client,server,web -p name \"cd client && tsc --watch\" \"cd server && tsc --watch\" \"npm run web\"",
     "web": "http-server"
   },
   "repository": {
@@ -27,8 +29,5 @@
     "http-server": "^0.10.0",
     "systemjs": "^0.20.15",
     "typescript": "^2.4.1"
-  },
-  "dependencies": {
-    "p5": "^0.5.11"
   }
 }
