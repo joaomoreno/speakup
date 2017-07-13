@@ -194,20 +194,33 @@ class App extends React.Component<AppProps, AppState> {
       <section className="section">
         <div className="container">
           <table className="table">
+            <colgroup>
+              <col span={1} style={{ width: '35%' }} />
+              <col span={1} style={{ width: '50%' }} />
+              <col span={1} style={{ width: '15%' }} />
+            </colgroup>
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Progress</th>
                 <th>Duration</th>
               </tr>
             </thead>
             <tbody>
               {
-                speakerStates.map(s =>
-                  <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
+                speakerStates.map(s => {
+                  const seconds = Math.round(s.time / 1000);
+
+                  return <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
                     <th>{s.speaker.name}</th>
-                    <td>{Math.round(s.time / 1000)} s</td>
+                    <td>
+                      <progress className="progress is-info" value={Math.min(seconds / 60 * 100, 100)} max="100"></progress>
+                    </td>
+                    <td>
+                      {seconds} s
+                    </td>
                   </tr>
-                )
+                })
               }
             </tbody>
           </table>

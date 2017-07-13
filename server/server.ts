@@ -25,8 +25,8 @@ export const unknownId = '00000000-0000-0000-0000-000000000000';
 function createInitialState(speakers: Speaker[]): State {
   return {
     speakers: [
-      { speaker: { id: unknownId, name: 'John Doe' }, time: 0 },
-      ...speakers.map(speaker => ({ speaker, time: 0 }))
+      ...speakers.map(speaker => ({ speaker, time: 0 })),
+      { speaker: { id: unknownId, name: 'John Doe' }, time: 0 }
     ],
     lastSpeakerId: undefined
   };
