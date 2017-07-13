@@ -22,6 +22,9 @@ export class SpeechToTextService {
 
 	private recognizer: Speech.Recognizer;
 
+	private _onSpeechPaused: Emitter<void> = new Emitter<void>();
+	readonly onSpeechPaused: Event<void> = this._onSpeechPaused.event;
+
 	private _onText: Emitter<string> = new Emitter<string>();
 	readonly onText: Event<string> = this._onText.event;
 
@@ -65,11 +68,11 @@ export class SpeechToTextService {
 			}
 
 			else if (event instanceof Speech.SpeechEndDetectedEvent) {
-				this._onText.fire('');
-				console.log("Speech ended");
+				this._onSpeechPaused.fire();
 			}
 
 			else if (event instanceof Speech.RecognitionEndedEvent) {
+				this._onText.fire('');
 				this.start();
 			}
 
