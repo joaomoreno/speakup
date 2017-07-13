@@ -132,15 +132,20 @@ class App extends React.Component<AppProps, AppState> {
 }
 
 const mic = new Microphone();
-ReactDOM.render(<App microphone={mic} />, document.body);
 
-function recordOneSecond(mic: Microphone) {
+mic.onReady(() => {
+  ReactDOM.render(<App microphone={mic} />, document.body);
+  record(mic);
+});
+
+function record(mic: Microphone) {
   const socket = new WebSocket('ws://localhost:8080/');
   const recorder = RecordRTC(mic.stream, {
     type: 'audio',
     recorderType: StereoAudioRecorder,
     numberOfAudioChannels: 1,
-    desiredSampRate: 16 * 1000
+    desiredSampRate: 16 * 1000,
+    disableLogs: true
   });
 
   recorder.startRecording();

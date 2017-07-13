@@ -5,27 +5,46 @@ import { identifySpeaker } from "./lib/speaker-recognition";
 // import * as fs from 'fs';
 // import * as WebSocket from 'ws';
 
+interface Speaker {
+  name: string;
+  id: string;
+}
+
+interface SpeakerState {
+  speaker: Speaker;
+  time: number;
+}
+
+interface State {
+  [id: string]: SpeakerState;
+}
+
+function createInitialState(speakers: Speaker[]): State {
+  return speakers.reduce<State>((r, s) => ({ [s.id]: { speaker: s, time: 0 }, ...r }), {});
+}
+
+const speakers = require('../people.json') as Speaker[];
+const state = createInitialState(speakers);
+
 const app = express();
 ws(app);
-
-const state = {
-  "Michel": 0,
-  "Joao": 0
-}; // stored in seconds
-
-const speakers = {
-  "2498991d-c5a9-4143-a345-4b8ba23605ea": "Michel",
-  "1204fa35-12b0-466c-a42f-6d1d53358f6c": "Joao"
-}
 
 app.use(express.static(__dirname + '/..'));
 
 app.ws('/', (ws, req) => {
   ws.on('message', async msg => {
+
     try {
-      console.log(Object.keys(speakers));
-      const speakerId = await identifySpeaker(msg, Object.keys(speakers));
-      state[speakers[speakerId]] += 5;
+      const speakerIds = speakers.map(s => s.id);
+      const speakerId = await identifySpeaker(msg, speakerIds);
+      const speakerState = state[speakerId];
+
+      if (speakerState) {
+        speakerState.time += 5;
+      }
+
+      console.log('SENDING DATA');
+
       ws.send(JSON.stringify(state));
     } catch (e) {
       console.error(e);
