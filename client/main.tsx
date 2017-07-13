@@ -137,12 +137,12 @@ class App extends React.Component<AppProps, AppState> {
         speechService.onText(text => {
           this.setState({ ...this.state, subtitles: text });
         });
-      });
 
-    this.startRecording();
+        this.startRecording(speechService.onSpeechPaused);
+      });
   }
 
-  private startRecording() {
+  private startRecording(onSpeechEnded: Event<void>) {
     const socket = new WebSocket('ws://localhost:8080/');
     const recorder = RecordRTC(this.props.microphone.stream, {
       type: 'audio',
@@ -152,12 +152,20 @@ class App extends React.Component<AppProps, AppState> {
       disableLogs: true
     });
 
+    let startTime = new Date().getTime();
     recorder.startRecording();
 
-    setInterval(() => {
-      recorder.stopRecording(() => socket.send(recorder.getBlob()));
+    onSpeechEnded(() => {
+      const duration = new Date().getTime() - startTime;
+
+      recorder.stopRecording(() => {
+        socket.send(String(duration));
+        socket.send(recorder.getBlob());
+      });
+
+      startTime = new Date().getTime();
       recorder.startRecording();
-    }, 5000);
+    });
 
     socket.addEventListener('message', e => {
       this.setState({

@@ -46,19 +46,28 @@ app.use(express.static(__dirname + '/..'));
 app.ws('/', (ws, req) => {
   ws.send(JSON.stringify(state));
 
+  let duration: number | undefined = undefined;
+
   ws.on('message', async msg => {
-    try {
-      const speakerIds = speakers.map(s => s.id);
-      const speakerId = await identifySpeaker(msg, speakerIds);
-      const speakerState = state[speakerId];
+    if (duration === undefined) {
+      duration = parseInt(msg);
+    } else {
+      const blobDuration = duration;
+      duration = undefined;
 
-      if (speakerState) {
-        speakerState.time += 5;
+      try {
+        const speakerIds = speakers.map(s => s.id);
+        const speakerId = await identifySpeaker(msg, speakerIds);
+        const speakerState = state[speakerId];
+
+        if (speakerState) {
+          speakerState.time += blobDuration;
+        }
+
+        ws.send(JSON.stringify(state));
+      } catch (e) {
+        console.error(e);
       }
-
-      ws.send(JSON.stringify(state));
-    } catch (e) {
-      console.error(e);
     }
   });
 });
