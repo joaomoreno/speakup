@@ -70,7 +70,7 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
     let x = 0;
 
     for (var i = 0; i < frequencyData.length; i++) {
-      const barHeight = (frequencyData[i] + 140) * 7;
+      const barHeight = (frequencyData[i] + 140) * 14;
       const y = this.props.height - barHeight / 2;
 
       ctx.lineTo(x, y);
@@ -91,7 +91,7 @@ function Subtitles(props: { label: string }) {
   return <footer className="footer">
     <div className="container">
       <div className="content has-text-centered">
-        <p>{props.label}</p>
+        <p>{props.label || '\u00A0'}</p>
       </div>
     </div>
   </footer>;
@@ -210,11 +210,13 @@ class App extends React.Component<AppProps, AppState> {
               {
                 speakerStates.map(s => {
                   const seconds = Math.round(s.time / 1000);
+                  const percentage = Math.min(seconds / 60 * 100, 100);
+                  const progressType = percentage >= 100 ? 'is-danger' : percentage >= 50 ? 'is-warning' : 'is-info';
 
                   return <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
                     <th>{s.speaker.name}</th>
                     <td>
-                      <progress className="progress is-info" value={Math.min(seconds / 60 * 100, 100)} max="100"></progress>
+                      <progress className={`progress ${progressType}`} value={percentage} max="100"></progress>
                     </td>
                     <td>
                       {seconds} s

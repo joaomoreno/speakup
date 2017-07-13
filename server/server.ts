@@ -64,6 +64,10 @@ app.ws('/', (ws, req) => {
 
         ws.send(JSON.stringify(state));
       } catch (e) {
+        if (/not opened/.test(e.message)) {
+          return;
+        }
+
         console.error(e);
       }
     }
