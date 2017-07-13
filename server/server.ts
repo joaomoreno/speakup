@@ -19,8 +19,20 @@ interface State {
   [id: string]: SpeakerState;
 }
 
+const unknownId = '00000000-0000-0000-0000-000000000000';
+
 function createInitialState(speakers: Speaker[]): State {
-  return speakers.reduce<State>((r, s) => ({ [s.id]: { speaker: s, time: 0 }, ...r }), {});
+  const state = speakers.reduce<State>((r, s) => ({ [s.id]: { speaker: s, time: 0 }, ...r }), {});
+
+  state[unknownId] = {
+    speaker: {
+      id: unknownId,
+      name: 'John Doe'
+    },
+    time: 0
+  };
+
+  return state;
 }
 
 const speakers = require('../people.json') as Speaker[];

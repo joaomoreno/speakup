@@ -35,7 +35,7 @@ export async function identifySpeaker(audio: Buffer, identificationProfileIds: s
 				return res(identifySpeaker(audio, identificationProfileIds, operationLocation, retry)); // add recursion termination at some point, not to rely on service
 			}
 
-			if (result.status === 'failed' || result.processingResult.identifiedProfileId === '00000000-0000-0000-0000-000000000000') {
+			if (result.status === 'failed') {
 				return rej(`Identification failed or no speaker identified. ${result.message}`);
 			}
 
