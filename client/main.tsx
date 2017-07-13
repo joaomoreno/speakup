@@ -71,11 +71,22 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
   }
 }
 
+function Subtitles(props: { label: string }) {
+  return <footer className="footer">
+    <div className="container">
+      <div className="content has-text-centered">
+        <p>{props.label}</p>
+      </div>
+    </div>
+  </footer>;
+}
+
 type AppProps = {
   microphone: Microphone
 };
 
 type AppState = {
+  subtitles: string,
   width: number,
   height: number
 };
@@ -86,6 +97,7 @@ class App extends React.Component<AppProps, AppState> {
     super(props);
 
     this.state = {
+      subtitles: 'Hello There',
       width: 0,
       height: 0
     };
@@ -104,7 +116,17 @@ class App extends React.Component<AppProps, AppState> {
   render() {
     return <div>
       <SpectrumAnalyzer width={this.state.width} height={this.state.height} microphone={this.props.microphone} />
-      <p>Hello World</p>
+      <section className="hero is-primary">
+        <div className="hero-body">
+          <div className="container">
+            <h1 className="title">
+              Speakup!
+            </h1>
+          </div>
+        </div>
+      </section>
+
+      <Subtitles label={this.state.subtitles} />
     </div>;
   }
 }

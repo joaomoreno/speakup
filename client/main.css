@@ -21,3 +21,10 @@ canvas {
   height: 100%;
   z-index: -1;
 }
+
+.footer {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  padding: 20px;
+}
