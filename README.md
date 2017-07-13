@@ -10,6 +10,8 @@ The next-gen Standup app
 git clone git@github.com:joaomoreno/speakup.git
 cd speakup
 npm i
+
+# add devenv.json config to the root folder with required service keys
 npm run dev
 ```
 

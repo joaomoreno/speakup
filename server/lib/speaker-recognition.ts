@@ -1,9 +1,9 @@
 import * as request from 'request';
 let subscriptionKey;
 try {
-    subscriptionKey = require('../../devenv.json').subscriptionKey;
+    subscriptionKey = require('../../devenv.json').srKey;
 } catch (e) {
-    throw new Error('Please add devenv.json configuration.');
+    throw new Error('Please add `srKey` to devenv.json.');
 }
 
 export async function identifySpeaker(audio: Buffer, identificationProfileIds: string[], operationLocation?: string, retry: number = 0): Promise<string> {
