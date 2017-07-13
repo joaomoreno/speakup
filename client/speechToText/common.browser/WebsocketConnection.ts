@@ -1,3 +1,4 @@
+import { ConnectionEvent } from "../common/ConnectionEvents";
 import {
     ArgumentNullError,
     ConnectionMessage,
@@ -104,7 +105,7 @@ export class WebsocketConnection implements IConnection {
         return this.connectionMessageAdapter.Read();
     }
 
-    public get Events(): EventSource<PlatformEvent> {
-        return this.connectionMessageAdapter.Events;
+    public get Events(): EventSource<ConnectionEvent> {
+        return this.connectionMessageAdapter.Events as EventSource<ConnectionEvent>;
     }
 }
