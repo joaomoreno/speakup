@@ -40,9 +40,9 @@ export async function identifySpeaker(audio: Buffer, identificationProfileIds: s
 				return rej(`Identification failed or no speaker identified. ${result.message}`);
 			}
 
-			// if (result.processingResult.confidence !== 'High') {
-			// 	return res(unknownId);
-			// }
+			if (result.processingResult.confidence === 'Low') {
+				return res(unknownId);
+			}
 
 			return res(result.processingResult.identifiedProfileId);
 		});
