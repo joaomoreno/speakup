@@ -61,12 +61,17 @@ function draw() {
   requestAnimationFrame(draw);
 
   mic.getFloatFrequencyData(dataArray);
-  canvasCtx.fillStyle = 'rgb(255,255,255)';
+  canvasCtx.fillStyle = 'rgb(255,240,240)';
   canvasCtx.fillRect(0, 0, canvasSize.width, canvasSize.height);
 
   canvasCtx.beginPath();
-  canvasCtx.lineWidth = 5;
-  canvasCtx.strokeStyle = 'rgba(128, 0, 0, 0.1)';
+
+  // canvasCtx.lineWidth = 5;
+  // canvasCtx.strokeStyle = 'rgba(128, 0, 0, 0.1)';
+  canvasCtx.fillStyle = 'rgba(128, 0, 0, 0.05)';
+
+  canvasCtx.moveTo(canvasSize.width, canvasSize.height);
+  canvasCtx.lineTo(0, canvasSize.height);
 
   const barWidth = (canvasSize.width / bufferLength) * 2.5;
   let x = 0;
@@ -75,16 +80,13 @@ function draw() {
     const barHeight = (dataArray[i] + 140) * 10;
     const y = canvasSize.height - barHeight / 2;
 
-    if (i === 0) {
-      canvasCtx.moveTo(x, y);
-    } else {
-      canvasCtx.lineTo(x, y);
-    }
-
+    canvasCtx.lineTo(x, y);
     x += barWidth + 1;
   }
 
-  canvasCtx.stroke();
+  canvasCtx.lineTo(canvasSize.width, canvasSize.height);
+  // canvasCtx.stroke();
+  canvasCtx.fill();
 };
 
 draw();
@@ -107,6 +109,7 @@ declare const RecordRTC;
 declare const StereoAudioRecorder;
 
 mic.onReady(() => {
+  return;
   const socket = new WebSocket('ws://localhost:8080/');
   const recorder = RecordRTC(mic.stream, {
     type: 'audio',
@@ -121,6 +124,8 @@ mic.onReady(() => {
     recorder.stopRecording(() => socket.send(recorder.getBlob()));
     recorder.startRecording();
   }, 5000);
+
+  socket.addEventListener('message', e => console.log(e.data));
 
   // recordRTC.startRecording();
 
