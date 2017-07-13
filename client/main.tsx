@@ -15,7 +15,8 @@ interface SpeakerState {
 }
 
 interface Model {
-  [id: string]: SpeakerState;
+  speakers: SpeakerState[];
+  lastSpeakerId: string | undefined;
 }
 
 declare const RecordRTC;
@@ -113,7 +114,7 @@ class App extends React.Component<AppProps, AppState> {
     super(props);
 
     this.state = {
-      model: {},
+      model: { speakers: [], lastSpeakerId: undefined },
       subtitles: '',
       width: 0,
       height: 0
@@ -176,8 +177,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   render() {
-    const speakerIds = Object.keys(this.state.model);
-    const speakerStates = speakerIds.map(id => this.state.model[id]);
+    const speakerStates = this.state.model.speakers;
 
     return <div>
       <SpectrumAnalyzer width={this.state.width} height={this.state.height} microphone={this.props.microphone} />
@@ -203,9 +203,9 @@ class App extends React.Component<AppProps, AppState> {
             <tbody>
               {
                 speakerStates.map(s =>
-                  <tr>
+                  <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
                     <th>{s.speaker.name}</th>
-                    <td>{s.time / 1000}</td>
+                    <td>{Math.round(s.time / 1000)} s</td>
                   </tr>
                 )
               }

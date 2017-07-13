@@ -16,23 +16,20 @@ interface SpeakerState {
 }
 
 interface State {
-  [id: string]: SpeakerState;
+  speakers: SpeakerState[];
+  lastSpeakerId: string | undefined;
 }
 
 export const unknownId = '00000000-0000-0000-0000-000000000000';
 
 function createInitialState(speakers: Speaker[]): State {
-  const state = speakers.reduce<State>((r, s) => ({ [s.id]: { speaker: s, time: 0 }, ...r }), {});
-
-  state[unknownId] = {
-    speaker: {
-      id: unknownId,
-      name: 'John Doe'
-    },
-    time: 0
+  return {
+    speakers: [
+      { speaker: { id: unknownId, name: 'John Doe' }, time: 0 },
+      ...speakers.map(speaker => ({ speaker, time: 0 }))
+    ],
+    lastSpeakerId: undefined
   };
-
-  return state;
 }
 
 const speakers = require('../people.json') as Speaker[];
@@ -58,10 +55,11 @@ app.ws('/', (ws, req) => {
       try {
         const speakerIds = speakers.map(s => s.id);
         const speakerId = await identifySpeaker(msg, speakerIds);
-        const speakerState = state[speakerId];
+        const speakerState = state.speakers.filter(s => s.speaker.id === speakerId)[0];
 
         if (speakerState) {
           speakerState.time += blobDuration;
+          state.lastSpeakerId = speakerId;
         }
 
         ws.send(JSON.stringify(state));
