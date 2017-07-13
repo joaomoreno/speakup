@@ -7,9 +7,9 @@ function RecognizerSetup(subscriptionKey): Speech.Recognizer {
 			new Speech.Context(
 				new Speech.OS(navigator.userAgent, "Browser", null),
 				new Speech.Device("SpeechSample", "SpeechSample", "1.0.00000"))),
-		Speech.RecognitionMode.Conversation,
+		Speech.RecognitionMode.Interactive,
 		"en-us",
-		Speech.SpeechResultFormat.Simple,
+		Speech.SpeechResultFormat.Detailed,
 	);
 
 	// Alternatively use SDK.CognitiveTokenAuthentication(fetchCallback, fetchOnExpiryCallback) for token auth
@@ -56,9 +56,9 @@ export class SpeechToTextService {
 			}
 
 			else if (event instanceof Speech.SpeechSimplePhraseEvent) {
-				if (event.Result.DisplayText) {
-					this._onText.fire(event.Result.DisplayText);
-				}
+				// if (event.Result.DisplayText) {
+				// 	this._onText.fire(event.Result.DisplayText);
+				// }
 			}
 
 			else if (event instanceof Speech.SpeechDetailedPhraseEvent) {
@@ -69,12 +69,11 @@ export class SpeechToTextService {
 			}
 
 			else if (event instanceof Speech.RecognitionEndedEvent) {
-				console.log("Recognition ended");
+				this.start();
 			}
 
 		})
 			.On(() => {
-				// The request succeeded. Nothing to do here.
 			},
 			(error) => {
 				console.error(error);
