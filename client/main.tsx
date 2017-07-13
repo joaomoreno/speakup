@@ -209,9 +209,9 @@ class App extends React.Component<AppProps, AppState> {
 
 fetch('/devenv.json')
   .then(response => response.json())
-  .then(({ speechServiceSubscriptionKey }) => {
+  .then(({ bsKey }) => {
     const mic = new Microphone();
-    const speechService = new SpeechToTextService(speechServiceSubscriptionKey);
+    const speechService = new SpeechToTextService(bsKey);
     speechService.start();
     mic.onReady(() => {
       ReactDOM.render(<App speechService={speechService} />, document.body);
