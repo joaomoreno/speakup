@@ -205,7 +205,7 @@ class App extends React.Component<AppProps, AppState> {
                 speakerStates.map(s =>
                   <tr>
                     <th>{s.speaker.name}</th>
-                    <td>{s.time}</td>
+                    <td>{s.time / 1000}</td>
                   </tr>
                 )
               }
