@@ -32,8 +32,9 @@ ws(app);
 app.use(express.static(__dirname + '/..'));
 
 app.ws('/', (ws, req) => {
-  ws.on('message', async msg => {
+  ws.send(JSON.stringify(state));
 
+  ws.on('message', async msg => {
     try {
       const speakerIds = speakers.map(s => s.id);
       const speakerId = await identifySpeaker(msg, speakerIds);

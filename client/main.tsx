@@ -3,6 +3,20 @@ import ReactDOM from 'react-dom';
 import { Event, Emitter } from './util';
 import { Microphone } from './audio';
 
+interface Speaker {
+  name: string;
+  id: string;
+}
+
+interface SpeakerState {
+  speaker: Speaker;
+  time: number;
+}
+
+interface Model {
+  [id: string]: SpeakerState;
+}
+
 declare const RecordRTC;
 declare const StereoAudioRecorder;
 
@@ -54,7 +68,7 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
     let x = 0;
 
     for (var i = 0; i < frequencyData.length; i++) {
-      const barHeight = (frequencyData[i] + 140) * 10;
+      const barHeight = (frequencyData[i] + 140) * 7;
       const y = this.props.height - barHeight / 2;
 
       ctx.lineTo(x, y);
@@ -81,11 +95,10 @@ function Subtitles(props: { label: string }) {
   </footer>;
 }
 
-type AppProps = {
-  microphone: Microphone
-};
+type AppProps = {};
 
 type AppState = {
+  model: Model;
   subtitles: string,
   width: number,
   height: number
@@ -93,10 +106,13 @@ type AppState = {
 
 class App extends React.Component<AppProps, AppState> {
 
+  private mic = new Microphone();
+
   constructor(props) {
     super(props);
 
     this.state = {
+      model: {},
       subtitles: 'Hello There',
       width: 0,
       height: 0
@@ -111,11 +127,41 @@ class App extends React.Component<AppProps, AppState> {
 
     window.addEventListener('resize', updateState);
     updateState();
+
+    this.mic.onReady(() => this.startRecording());
+  }
+
+  private startRecording() {
+    const socket = new WebSocket('ws://localhost:8080/');
+    const recorder = RecordRTC(this.mic.stream, {
+      type: 'audio',
+      recorderType: StereoAudioRecorder,
+      numberOfAudioChannels: 1,
+      desiredSampRate: 16 * 1000,
+      disableLogs: true
+    });
+
+    recorder.startRecording();
+
+    setInterval(() => {
+      recorder.stopRecording(() => socket.send(recorder.getBlob()));
+      recorder.startRecording();
+    }, 5000);
+
+    socket.addEventListener('message', e => {
+      this.setState({
+        ...this.state,
+        model: JSON.parse(e.data)
+      });
+    });
   }
 
   render() {
+    const speakerIds = Object.keys(this.state.model);
+    const speakerStates = speakerIds.map(id => this.state.model[id]);
+
     return <div>
-      <SpectrumAnalyzer width={this.state.width} height={this.state.height} microphone={this.props.microphone} />
+      <SpectrumAnalyzer width={this.state.width} height={this.state.height} microphone={this.mic} />
       <section className="hero is-primary">
         <div className="hero-body">
           <div className="container">
@@ -126,17 +172,35 @@ class App extends React.Component<AppProps, AppState> {
         </div>
       </section>
 
+      <section className="section">
+        <div className="container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                speakerStates.map(s =>
+                  <tr>
+                    <th>{s.speaker.name}</th>
+                    <td>{s.time}</td>
+                  </tr>
+                )
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <Subtitles label={this.state.subtitles} />
     </div>;
   }
 }
 
-const mic = new Microphone();
-
-mic.onReady(() => {
-  ReactDOM.render(<App microphone={mic} />, document.body);
-  record(mic);
-});
+ReactDOM.render(<App />, document.body);
 
 function record(mic: Microphone) {
   const socket = new WebSocket('ws://localhost:8080/');

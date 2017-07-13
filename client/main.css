@@ -28,3 +28,7 @@ canvas {
   bottom: 0;
   padding: 20px;
 }
+
+.section, .table {
+  background-color: transparent;
+}
