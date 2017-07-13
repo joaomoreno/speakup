@@ -65,6 +65,7 @@ export class SpeechToTextService {
 			}
 
 			else if (event instanceof Speech.SpeechEndDetectedEvent) {
+				this._onText.fire('');
 				console.log("Speech ended");
 			}
 
