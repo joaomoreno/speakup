@@ -89,24 +89,25 @@ function draw() {
 
 draw();
 
-var saveData = (function () {
-  var a = document.createElement("a");
-  document.body.appendChild(a);
-  a.style = "display: none";
-  return function (blob, fileName) {
-    let url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
-}());
+// var saveData = (function () {
+//   var a = document.createElement("a");
+//   document.body.appendChild(a);
+//   a.style = "display: none";
+//   return function (blob, fileName) {
+//     let url = window.URL.createObjectURL(blob);
+//     a.href = url;
+//     a.download = fileName;
+//     a.click();
+//     window.URL.revokeObjectURL(url);
+//   };
+// }());
 
 // declare const WebAudioRecorder;
 declare const RecordRTC;
 declare const StereoAudioRecorder;
 
 mic.onReady(() => {
+  const socket = new WebSocket('ws://localhost:8080/');
   const recorder = RecordRTC(mic.stream, {
     type: 'audio',
     recorderType: StereoAudioRecorder,
@@ -117,10 +118,7 @@ mic.onReady(() => {
   recorder.startRecording();
 
   setInterval(() => {
-    recorder.stopRecording(function (audioURL) {
-      console.log(recorder.getBlob());
-    });
-
+    recorder.stopRecording(() => socket.send(recorder.getBlob()));
     recorder.startRecording();
   }, 5000);
 
