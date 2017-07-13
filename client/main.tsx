@@ -43,11 +43,18 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
     };
 
     draw();
+
+    setInterval(() => {
+      console.log(this.min, this.max);
+    }, 1000)
   }
 
   componentWillUnmount() {
     cancelAnimationFrame(this.animationFrameRequest);
   }
+
+  private min = Number.POSITIVE_INFINITY;
+  private max = Number.NEGATIVE_INFINITY;
 
   paint() {
     const frequencyData = this.props.microphone.getFloatFrequencyData();
@@ -70,8 +77,9 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
     let x = 0;
 
     for (var i = 0; i < frequencyData.length; i++) {
-      const barHeight = (frequencyData[i] + 140) * 14;
-      const y = this.props.height - barHeight / 2;
+      const value = Math.max(frequencyData[i] + 120, 0);
+      const barHeight = value * this.props.height / 140;
+      const y = this.props.height - barHeight;
 
       ctx.lineTo(x, y);
       x += barWidth + 1;
