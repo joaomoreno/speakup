@@ -4,9 +4,13 @@ class Microphone {
 
   private context: AudioContext;
   private analyser: AnalyserNode;
-  private _sourceNode: MediaStreamAudioSourceNode;
 
+  private _stream: MediaStream;
+  get stream(): MediaStream { return this._stream; }
+
+  private _sourceNode: MediaStreamAudioSourceNode;
   get sourceNode(): MediaStreamAudioSourceNode { return this._sourceNode; }
+
   get frequencyBufferSize(): number { return this.analyser.frequencyBinCount; }
 
   private _onAudio = new Emitter<void>();
@@ -25,6 +29,7 @@ class Microphone {
   }
 
   private setup(stream: MediaStream): void {
+    this._stream = stream;
     this._sourceNode = this.context.createMediaStreamSource(stream);
     this._sourceNode.connect(this.analyser);
     this._onReady.fire();
@@ -97,24 +102,44 @@ var saveData = (function () {
   };
 }());
 
-declare const WebAudioRecorder;
+// declare const WebAudioRecorder;
+declare const RecordRTC;
+declare const StereoAudioRecorder;
 
 mic.onReady(() => {
-  const recorder = new WebAudioRecorder(mic.sourceNode, {
-    workerDir: '/client/node_modules/web-audio-recorder-js/lib-minified/',
-    numChannels: 1
+  const recorder = RecordRTC(mic.stream, {
+    type: 'audio',
+    recorderType: StereoAudioRecorder,
+    numberOfAudioChannels: 1,
+    desiredSampRate: 16 * 1000
   });
 
   recorder.startRecording();
 
-  setTimeout(() => {
-    recorder.finishRecording();
-  }, 1000);
+  setInterval(() => {
+    recorder.stopRecording(function (audioURL) {
+      console.log(recorder.getBlob());
+    });
 
-  recorder.onComplete = (recorder, blob: Blob) => {
-    console.log(blob);
-    // const url = window.URL.createObjectURL(blob);
-    // window.location.assign(url);
-    // saveData(blob, 'hello.wav');
-  };
+    recorder.startRecording();
+  }, 5000);
+
+  // recordRTC.startRecording();
+
+  // setTimeout(() => {
+  //   recordRTC.stopRecording(function (audioURL) {
+  //     console.log(audioURL);
+
+  //     // var blob = recordRTC.getBlob();
+  //     // const url = window.URL.createObjectURL(blob);
+  //     // window.location.assign(url);
+  //     // // saveData(blob, 'hello.wav');
+  //     // // recordRTC.getDataURL(function (dataURL) {
+  //     // //   console.log(dataURL);
+  //     // // });
+  //   });
+  // }, 1000);
+
+
+
 })
