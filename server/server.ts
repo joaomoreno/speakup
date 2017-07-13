@@ -14,7 +14,8 @@ const state = {
 }; // stored in seconds
 
 const speakers = {
-  "2498991d-c5a9-4143-a345-4b8ba23605ea": "Michel"
+  "2498991d-c5a9-4143-a345-4b8ba23605ea": "Michel",
+  "1204fa35-12b0-466c-a42f-6d1d53358f6c": "Joao"
 }
 
 app.use(express.static(__dirname + '/..'));
