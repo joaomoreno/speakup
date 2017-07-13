@@ -97,7 +97,7 @@ function Subtitles(props: { label: string }) {
 }
 
 type AppProps = {
-  speechService: SpeechToTextService;
+  microphone: Microphone;
 };
 
 type AppState = {
@@ -108,8 +108,6 @@ type AppState = {
 };
 
 class App extends React.Component<AppProps, AppState> {
-
-  private mic = new Microphone();
 
   constructor(props) {
     super(props);
@@ -131,16 +129,22 @@ class App extends React.Component<AppProps, AppState> {
     window.addEventListener('resize', updateState);
     updateState();
 
-    this.mic.onReady(() => this.startRecording());
+    fetch('/devenv.json')
+      .then(response => response.json())
+      .then(({ bsKey }) => {
+        const speechService = new SpeechToTextService(bsKey);
+        speechService.start();
+        speechService.onText(text => {
+          this.setState({ ...this.state, subtitles: text });
+        });
+      });
 
-    this.props.speechService.onText(text => {
-      this.setState({ ...this.state, subtitles: text });
-    });
+    this.startRecording();
   }
 
   private startRecording() {
     const socket = new WebSocket('ws://localhost:8080/');
-    const recorder = RecordRTC(this.mic.stream, {
+    const recorder = RecordRTC(this.props.microphone.stream, {
       type: 'audio',
       recorderType: StereoAudioRecorder,
       numberOfAudioChannels: 1,
@@ -168,7 +172,7 @@ class App extends React.Component<AppProps, AppState> {
     const speakerStates = speakerIds.map(id => this.state.model[id]);
 
     return <div>
-      <SpectrumAnalyzer width={this.state.width} height={this.state.height} microphone={this.mic} />
+      <SpectrumAnalyzer width={this.state.width} height={this.state.height} microphone={this.props.microphone} />
       <section className="hero is-primary">
         <div className="hero-body">
           <div className="container">
@@ -207,53 +211,5 @@ class App extends React.Component<AppProps, AppState> {
   }
 }
 
-fetch('/devenv.json')
-  .then(response => response.json())
-  .then(({ bsKey }) => {
-    const mic = new Microphone();
-    const speechService = new SpeechToTextService(bsKey);
-    speechService.start();
-    mic.onReady(() => {
-      ReactDOM.render(<App speechService={speechService} />, document.body);
-      record(mic);
-    });
-  });
-
-
-function record(mic: Microphone) {
-  const socket = new WebSocket('ws://localhost:8080/');
-  const recorder = RecordRTC(mic.stream, {
-    type: 'audio',
-    recorderType: StereoAudioRecorder,
-    numberOfAudioChannels: 1,
-    desiredSampRate: 16 * 1000,
-    disableLogs: true
-  });
-
-  recorder.startRecording();
-
-  setInterval(() => {
-    recorder.stopRecording(() => socket.send(recorder.getBlob()));
-    recorder.startRecording();
-  }, 5000);
-
-  socket.addEventListener('message', e => console.log(e.data));
-
-  // recordRTC.startRecording();
-
-  // setTimeout(() => {
-  //   recordRTC.stopRecording(function (audioURL) {
-  //     console.log(audioURL);
-
-  //     // var blob = recordRTC.getBlob();
-  //     // const url = window.URL.createObjectURL(blob);
-  //     // window.location.assign(url);
-  //     // // saveData(blob, 'hello.wav');
-  //     // // recordRTC.getDataURL(function (dataURL) {
-  //     // //   console.log(dataURL);
-  //     // // });
-  //   });
-  // }, 1000);
-}
-
-// mic.onReady(() => recordOneSecond(mic));
+const mic = new Microphone();
+mic.onReady(() => ReactDOM.render(<App microphone={mic} />, document.body));
