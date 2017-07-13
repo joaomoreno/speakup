@@ -1,49 +1,7 @@
 import { Event, Emitter } from './util';
-
-class Microphone {
-
-  private context: AudioContext;
-  private analyser: AnalyserNode;
-
-  private _stream: MediaStream;
-  get stream(): MediaStream { return this._stream; }
-
-  private _sourceNode: MediaStreamAudioSourceNode;
-  get sourceNode(): MediaStreamAudioSourceNode { return this._sourceNode; }
-
-  get frequencyBufferSize(): number { return this.analyser.frequencyBinCount; }
-
-  private _onAudio = new Emitter<void>();
-  get onAudio(): Event<void> { return this._onAudio.event; }
-
-  private _onReady = new Emitter<void>();
-  get onReady(): Event<void> { return this._onReady.event; }
-
-  constructor() {
-    this.context = new AudioContext();
-    console.log(this.context.sampleRate);
-    this.analyser = this.context.createAnalyser();
-    this.analyser.fftSize = 256;
-
-    navigator.getUserMedia({ audio: true }, stream => this.setup(stream), err => console.error(err));
-  }
-
-  private setup(stream: MediaStream): void {
-    this._stream = stream;
-    this._sourceNode = this.context.createMediaStreamSource(stream);
-    this._sourceNode.connect(this.analyser);
-    this._onReady.fire();
-  }
-
-  getFloatFrequencyData(buffer: Float32Array): void {
-    this.analyser.getFloatFrequencyData(buffer);
-  }
-}
+import { Microphone } from './audio';
 
 const mic = new Microphone();
-const bufferLength = mic.frequencyBufferSize;
-const dataArray = new Float32Array(bufferLength);
-
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const canvasCtx = canvas.getContext('2d');
 
@@ -60,7 +18,7 @@ window.addEventListener('resize', updateCanvasSize);
 function draw() {
   requestAnimationFrame(draw);
 
-  mic.getFloatFrequencyData(dataArray);
+  const frequencyData = mic.getFloatFrequencyData();
   canvasCtx.fillStyle = 'rgb(255,240,240)';
   canvasCtx.fillRect(0, 0, canvasSize.width, canvasSize.height);
 
@@ -73,11 +31,11 @@ function draw() {
   canvasCtx.moveTo(canvasSize.width, canvasSize.height);
   canvasCtx.lineTo(0, canvasSize.height);
 
-  const barWidth = (canvasSize.width / bufferLength) * 2.5;
+  const barWidth = (canvasSize.width / frequencyData.length) * 2.5;
   let x = 0;
 
-  for (var i = 0; i < bufferLength; i++) {
-    const barHeight = (dataArray[i] + 140) * 10;
+  for (var i = 0; i < frequencyData.length; i++) {
+    const barHeight = (frequencyData[i] + 140) * 10;
     const y = canvasSize.height - barHeight / 2;
 
     canvasCtx.lineTo(x, y);
