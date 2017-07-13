@@ -19,7 +19,7 @@ interface State {
   [id: string]: SpeakerState;
 }
 
-const unknownId = '00000000-0000-0000-0000-000000000000';
+export const unknownId = '00000000-0000-0000-0000-000000000000';
 
 function createInitialState(speakers: Speaker[]): State {
   const state = speakers.reduce<State>((r, s) => ({ [s.id]: { speaker: s, time: 0 }, ...r }), {});
