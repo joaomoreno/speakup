@@ -114,7 +114,7 @@ class App extends React.Component<AppProps, AppState> {
 
     this.state = {
       model: {},
-      subtitles: 'Hello There',
+      subtitles: '',
       width: 0,
       height: 0
     };
