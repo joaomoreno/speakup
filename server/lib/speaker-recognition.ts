@@ -31,7 +31,7 @@ export async function identifySpeaker(audio: Buffer, identificationProfileIds: s
 			}
 
 			const result = JSON.parse(body);
-			console.log(result);
+
 			if (result.status === 'notstarted' || result.status === 'running') {
 				return res(identifySpeaker(audio, identificationProfileIds, operationLocation, retry)); // add recursion termination at some point, not to rely on service
 			}
