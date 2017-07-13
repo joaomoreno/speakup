@@ -6,7 +6,11 @@ try {
     throw new Error('Please add devenv.json configuration.');
 }
 
-export async function identifySpeaker(audio: Buffer, identificationProfileIds: string[], operationLocation?: string): Promise<string> {
+export async function identifySpeaker(audio: Buffer, identificationProfileIds: string[], operationLocation?: string, retry: number = 0): Promise<string> {
+    if (retry > 5) {
+        return Promise.reject('Speaker identification timed out.');
+    }
+
     if (!operationLocation) {
         operationLocation = await getOperationLocation(audio, identificationProfileIds);
     }
@@ -28,14 +32,13 @@ export async function identifySpeaker(audio: Buffer, identificationProfileIds: s
             const result = JSON.parse(body);
             console.log(result);
             if (result.status === 'notstarted' || result.status === 'running') {
-                return res(identifySpeaker(audio, identificationProfileIds, operationLocation)); // add recursion termination at some point, not to rely on service
+                return res(identifySpeaker(audio, identificationProfileIds, operationLocation, retry)); // add recursion termination at some point, not to rely on service
             }
 
             if (result.status === 'failed' || result.processingResult.identifiedProfileId === '00000000-0000-0000-0000-000000000000') {
                 return rej(`Identification failed or no speaker identified. ${result.message}`);
             }
 
-            console.log(`${result.processingResult.identifiedProfileId}, probability: ${result.processingResult.confidence}`)
             return res(result.processingResult.identifiedProfileId);
         });
     });
@@ -56,10 +59,8 @@ function getOperationLocation(audio: Buffer, identificationProfileIds: string[])
             if (error) {
                 return rej(error);
             }
-            console.log(body);
             const operationLocation = response.headers['operation-location'];
             if (operationLocation) {
-                console.log(operationLocation);
                 return typeof operationLocation === 'string' ? res(operationLocation) : rej('Operation location is not a string.');
             } else {
                 return rej('Failed to obtain operation-location for a speaker.');
