@@ -8,11 +8,15 @@
   <title>Speakup</title>
 
   <script src="https://cdn.WebRTC-Experiment.com/RecordRTC.js"></script>
-  <script src="/client/node_modules/systemjs/dist/system.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.20.15/system.js"></script>
   <script>
     System.config({
       baseURL: 'client',
-      packages: { './': { defaultExtension: 'js' } }
+      packages: { './': { defaultExtension: 'js' } },
+      map: {
+        'react': 'https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react.min.js',
+        'react-dom': 'https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.min.js'
+      }
     });
 
     System.import('main');

@@ -4,17 +4,10 @@ export class Microphone {
 
   private context: AudioContext;
   private analyser: AnalyserNode;
+  private sourceNode: MediaStreamAudioSourceNode;
 
   private _stream: MediaStream;
   get stream(): MediaStream { return this._stream; }
-
-  private _sourceNode: MediaStreamAudioSourceNode;
-  get sourceNode(): MediaStreamAudioSourceNode { return this._sourceNode; }
-
-  // get frequencyBufferSize(): number { return this.analyser.frequencyBinCount; }
-
-  private _onAudio = new Emitter<void>();
-  get onAudio(): Event<void> { return this._onAudio.event; }
 
   private _onReady = new Emitter<void>();
   get onReady(): Event<void> { return this._onReady.event; }
@@ -23,7 +16,6 @@ export class Microphone {
 
   constructor() {
     this.context = new AudioContext();
-    console.log(this.context.sampleRate);
     this.analyser = this.context.createAnalyser();
     this.analyser.fftSize = 256;
     this._frequencyBuffer = new Float32Array(this.analyser.frequencyBinCount);
@@ -33,8 +25,8 @@ export class Microphone {
 
   private setup(stream: MediaStream): void {
     this._stream = stream;
-    this._sourceNode = this.context.createMediaStreamSource(stream);
-    this._sourceNode.connect(this.analyser);
+    this.sourceNode = this.context.createMediaStreamSource(stream);
+    this.sourceNode.connect(this.analyser);
     this._onReady.fire();
   }
 
