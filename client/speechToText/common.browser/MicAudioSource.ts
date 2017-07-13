@@ -140,7 +140,7 @@ export class MicAudioSource implements IAudioSource {
         return PromiseHelper.FromResult(true);
     }
 
-    public get Events(): EventSource<AudioSourceEvent> {
+    public get Events(): EventSource<any> {
         return this.events;
     }
 

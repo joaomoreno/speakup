@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Event, Emitter } from './util';
 import { Microphone } from './audio';
+import { SpeechToTextService } from './speechService';
 
 interface Speaker {
   name: string;
@@ -95,7 +96,9 @@ function Subtitles(props: { label: string }) {
   </footer>;
 }
 
-type AppProps = {};
+type AppProps = {
+  speechService: SpeechToTextService;
+};
 
 type AppState = {
   model: Model;
@@ -129,6 +132,10 @@ class App extends React.Component<AppProps, AppState> {
     updateState();
 
     this.mic.onReady(() => this.startRecording());
+
+    this.props.speechService.onText(text => {
+      this.setState({ ...this.state, subtitles: text });
+    });
   }
 
   private startRecording() {
@@ -200,7 +207,18 @@ class App extends React.Component<AppProps, AppState> {
   }
 }
 
-ReactDOM.render(<App />, document.body);
+fetch('/devenv.json')
+  .then(response => response.json())
+  .then(({ speechServiceSubscriptionKey }) => {
+    const mic = new Microphone();
+    const speechService = new SpeechToTextService(speechServiceSubscriptionKey);
+    speechService.start();
+    mic.onReady(() => {
+      ReactDOM.render(<App speechService={speechService} />, document.body);
+      record(mic);
+    });
+  });
+
 
 function record(mic: Microphone) {
   const socket = new WebSocket('ws://localhost:8080/');

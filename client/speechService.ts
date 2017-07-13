@@ -1,4 +1,5 @@
 import * as Speech from './Speech.Browser.Sdk';
+import { Emitter, Event } from './util';
 
 function RecognizerSetup(subscriptionKey): Speech.Recognizer {
 	var recognizerConfig = new Speech.RecognizerConfig(
@@ -6,7 +7,9 @@ function RecognizerSetup(subscriptionKey): Speech.Recognizer {
 			new Speech.Context(
 				new Speech.OS(navigator.userAgent, "Browser", null),
 				new Speech.Device("SpeechSample", "SpeechSample", "1.0.00000"))),
-		Speech.RecognitionMode.Dictation,
+		Speech.RecognitionMode.Conversation,
+		"en-us",
+		Speech.SpeechResultFormat.Simple,
 	);
 
 	// Alternatively use SDK.CognitiveTokenAuthentication(fetchCallback, fetchOnExpiryCallback) for token auth
@@ -18,6 +21,9 @@ function RecognizerSetup(subscriptionKey): Speech.Recognizer {
 export class SpeechToTextService {
 
 	private recognizer: Speech.Recognizer;
+
+	private _onText: Emitter<string> = new Emitter<string>();
+	readonly onText: Event<string> = this._onText.event;
 
 	constructor(private subscriptionKey: string) {
 		this.recognizer = RecognizerSetup(subscriptionKey);
@@ -44,14 +50,18 @@ export class SpeechToTextService {
 			}
 
 			else if (event instanceof Speech.SpeechHypothesisEvent) {
+				if (event.Result.Text) {
+					this._onText.fire(event.Result.Text);
+				}
 			}
 
 			else if (event instanceof Speech.SpeechSimplePhraseEvent) {
-				console.log(JSON.stringify(event.Result.DisplayText, null, 3));
+				if (event.Result.DisplayText) {
+					this._onText.fire(event.Result.DisplayText);
+				}
 			}
 
 			else if (event instanceof Speech.SpeechDetailedPhraseEvent) {
-				// console.log(JSON.stringify(event.Result., null, 3));
 			}
 
 			else if (event instanceof Speech.SpeechEndDetectedEvent) {
