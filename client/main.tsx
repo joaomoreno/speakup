@@ -38,14 +38,14 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
     const canvas = this.refs.canvas as HTMLCanvasElement;
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = 'rgb(255,240,240)';
+    ctx.fillStyle = 'rgb(250,250,250)';
     ctx.fillRect(0, 0, this.props.width, this.props.height);
 
     ctx.beginPath();
 
     // ctx.lineWidth = 5;
     // ctx.strokeStyle = 'rgba(128, 0, 0, 0.1)';
-    ctx.fillStyle = 'rgba(128, 0, 0, 0.05)';
+    ctx.fillStyle = 'rgb(240,240,240)';
 
     ctx.moveTo(this.props.width, this.props.height);
     ctx.lineTo(0, this.props.height);
@@ -102,7 +102,10 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   render() {
-    return <SpectrumAnalyzer width={this.state.width} height={this.state.height} microphone={this.props.microphone} />;
+    return <div>
+      <SpectrumAnalyzer width={this.state.width} height={this.state.height} microphone={this.props.microphone} />
+      <p>Hello World</p>
+    </div>;
   }
 }
 

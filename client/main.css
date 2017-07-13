@@ -1,0 +1,23 @@
+:root {
+  /* Coolors Exported Palette - coolors.co/5fad56-f2c14e-f78154-4d9078-b4436c */
+  --color1: rgba(95, 173, 86, 1);
+  --color2: rgba(242, 193, 78, 1);
+  --color3: rgba(247, 129, 84, 1);
+  --color4: rgba(77, 144, 120, 1);
+  --color5: rgba(180, 67, 108, 1);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
