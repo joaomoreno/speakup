@@ -43,8 +43,6 @@ app.ws('/', (ws, req) => {
         speakerState.time += 5;
       }
 
-      console.log('SENDING DATA');
-
       ws.send(JSON.stringify(state));
     } catch (e) {
       console.error(e);
