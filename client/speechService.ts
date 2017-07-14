@@ -22,9 +22,10 @@ export class SpeechToTextService {
 
 	private recognizer: Speech.Recognizer;
 
-	private _onSpeechPaused: Emitter<void> = new Emitter<void>();
-	readonly onSpeechPaused: Event<void> = this._onSpeechPaused.event;
+	private _onSpeechPaused: Emitter<string> = new Emitter<string>();
+	readonly onSpeechPaused: Event<string> = this._onSpeechPaused.event;
 
+	private lastText: string = '';
 	private _onText: Emitter<string> = new Emitter<string>();
 	readonly onText: Event<string> = this._onText.event;
 
@@ -54,6 +55,7 @@ export class SpeechToTextService {
 
 			else if (event instanceof Speech.SpeechHypothesisEvent) {
 				if (event.Result.Text) {
+					this.lastText = event.Result.Text;
 					this._onText.fire(event.Result.Text);
 				}
 			}
@@ -68,7 +70,7 @@ export class SpeechToTextService {
 			}
 
 			else if (event instanceof Speech.SpeechEndDetectedEvent) {
-				this._onSpeechPaused.fire();
+				this._onSpeechPaused.fire(this.lastText);
 			}
 
 			else if (event instanceof Speech.RecognitionEndedEvent) {

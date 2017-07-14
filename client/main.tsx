@@ -144,7 +144,7 @@ class App extends React.Component<AppProps, AppState> {
       });
   }
 
-  private startRecording(onSpeechEnded: Event<void>) {
+  private startRecording(onSpeechEnded: Event<string>) {
     const socket = new WebSocket('ws://localhost:8080/');
     const recorder = RecordRTC(this.props.microphone.stream, {
       type: 'audio',
@@ -157,16 +157,11 @@ class App extends React.Component<AppProps, AppState> {
     let startTime = new Date().getTime();
     recorder.startRecording();
 
-    onSpeechEnded(() => {
+    onSpeechEnded(text => {
       const duration = new Date().getTime() - startTime;
-      const text = '';
 
       recorder.stopRecording(() => {
-        const data = {
-          duration,
-          text
-        };
-        socket.send(JSON.stringify(data));
+        socket.send(JSON.stringify({ duration, text }));
         socket.send(recorder.getBlob());
       });
 
