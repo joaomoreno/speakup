@@ -71,10 +71,10 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
     const barWidth = (this.props.width / frequencyData.length) * 2.5;
     let x = 0;
 
-    for (var i = 0; i < frequencyData.length; i++) {
-      const value = Math.max(frequencyData[i] + 120, 0);
+    for (let i = 0; i < frequencyData.length; i++) {
+      const value = Math.max(frequencyData[i] + 120, 20) - 20;
       const barHeight = value * this.props.height / 140;
-      const y = this.props.height - barHeight - 20;
+      const y = this.props.height - barHeight;
 
       ctx.lineTo(x, y);
       x += barWidth + 1;
