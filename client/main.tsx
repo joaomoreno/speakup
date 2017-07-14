@@ -4,6 +4,8 @@ import { Event, Emitter } from './util';
 import { Microphone } from './audio';
 import { SpeechToTextService } from './speechService';
 
+const hideJohnDoe = false;
+
 interface Speaker {
   name: string;
   id: string;
@@ -170,10 +172,13 @@ class App extends React.Component<AppProps, AppState> {
     });
 
     socket.addEventListener('message', e => {
-      this.setState({
-        ...this.state,
-        model: JSON.parse(e.data)
-      });
+      const model = JSON.parse(e.data) as Model;
+
+      if (hideJohnDoe) {
+        model.speakers = model.speakers.filter(s => s.speaker.name !== 'John Doe');
+      }
+
+      this.setState({ ...this.state, model });
     });
   }
 
