@@ -82,7 +82,7 @@ app.ws('/', (ws, req) => {
 				ws.send(JSON.stringify(state));
 				// Send keyphrases in a second state message
 				if (speeches[speakerId] !== undefined) { // If speaker identified, send it
-					speeches[speakerId] === '' ? `${text}.` : `${speeches[speakerId]} ${text}.`;
+					speeches[speakerId] += ` ${text}.`;
 
 					const keyphrases = await getKeyPhrases(speeches[speakerId], speakerId, 5);
 					speakerState.keyphrases = keyphrases;
