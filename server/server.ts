@@ -1,9 +1,6 @@
 import * as express from 'express';
 import * as ws from 'express-ws';
 import { identifySpeaker } from "./lib/speaker-recognition";
-// Test code
-// import * as fs from 'fs';
-// import * as WebSocket from 'ws';
 
 interface Speaker {
   name: string;
@@ -13,6 +10,7 @@ interface Speaker {
 interface SpeakerState {
   speaker: Speaker;
   time: number;
+  keyphrases: string[];
 }
 
 interface State {
@@ -25,8 +23,8 @@ export const unknownId = '00000000-0000-0000-0000-000000000000';
 function createInitialState(speakers: Speaker[]): State {
   return {
     speakers: [
-      ...speakers.map(speaker => ({ speaker, time: 0 })),
-      { speaker: { id: unknownId, name: 'John Doe' }, time: 0 }
+      ...speakers.map(speaker => ({ speaker, time: 0, keyphrases: [] })),
+      { speaker: { id: unknownId, name: 'John Doe' }, time: 0, keyphrases: [] }
     ],
     lastSpeakerId: undefined
   };
@@ -63,6 +61,7 @@ app.ws('/', (ws, req) => {
         }
 
         ws.send(JSON.stringify(state));
+        // Send keyphrases in a second state message ws.send(JSON.stringify(state));
       } catch (e) {
         if (/not opened/.test(e.message)) {
           return;
@@ -77,14 +76,3 @@ app.ws('/', (ws, req) => {
 app.listen(8080, () => {
   console.log('Web server running in http://localhost:8080');
 });
-
-// Test code
-// const wsx = new WebSocket('ws://localhost:8080');
-// const audioCut = fs.readFileSync('C:/Users/t-mikapo/Documents/Projects/Standup/audio_cuts/michel_16khz.wav');
-// let i = 0;
-// wsx.on('open', function open() {
-//   if (i == 0) {
-//     wsx.send(audioCut);
-//   }
-//   i++;
-// });
