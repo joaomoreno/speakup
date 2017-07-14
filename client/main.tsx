@@ -7,11 +7,13 @@ import { SpeechToTextService } from './speechService';
 interface Speaker {
   name: string;
   id: string;
+  github: string;
 }
 
 interface SpeakerState {
   speaker: Speaker;
   time: number;
+  keyphrases: string[];
 }
 
 interface Model {
@@ -197,8 +199,8 @@ class App extends React.Component<AppProps, AppState> {
         <div className="container">
           <table className="table">
             <colgroup>
-              <col span={1} style={{ width: '15%' }} />
-              <col span={1} style={{ width: '45%' }} />
+              <col span={1} style={{ width: '20%' }} />
+              <col span={1} style={{ width: '40%' }} />
               <col span={1} style={{ width: '30%' }} />
               <col span={1} style={{ width: '10%' }} />
             </colgroup>
@@ -218,10 +220,15 @@ class App extends React.Component<AppProps, AppState> {
                   const progressType = percentage >= 100 ? 'is-danger' : percentage >= 50 ? 'is-warning' : 'is-info';
 
                   return <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
-                    <th>{s.speaker.name}</th>
                     <th>
-                      <span className="tag is-light">Primary</span>
+                      <figure className="avatar image is-24x24">
+                        {
+                          s.speaker.github ? <img src={`https://avatars1.githubusercontent.com/u/${s.speaker.github}?v=3&s=72`} /> : null
+                        }
+                      </figure>
+                      {s.speaker.name}
                     </th>
+                    <th>{s.keyphrases.map(k => <span className="tag is-light">{k}</span>)}</th>
                     <td>
                       <progress className={`progress ${progressType}`} value={percentage} max="100"></progress>
                     </td>

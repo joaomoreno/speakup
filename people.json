@@ -1,18 +1,22 @@
 [
   {
     "name": "Michel",
-    "id": "2498991d-c5a9-4143-a345-4b8ba23605ea"
+    "id": "2498991d-c5a9-4143-a345-4b8ba23605ea",
+    "github": "2239563"
   },
   {
     "name": "Joao",
-    "id": "1204fa35-12b0-466c-a42f-6d1d53358f6c"
+    "id": "1204fa35-12b0-466c-a42f-6d1d53358f6c",
+    "github": "22350"
   },
   {
     "name": "Sandeep",
-    "id": "a256fed6-ea12-4051-8f60-e3ca6acbf3de"
+    "id": "a256fed6-ea12-4051-8f60-e3ca6acbf3de",
+    "github": "10746682"
   },
   {
     "name": "Benjamin",
-    "id": "1020ec0d-2ada-45f1-b528-4b795032a385"
+    "id": "1020ec0d-2ada-45f1-b528-4b795032a385",
+    "github": "900690"
   }
 ]
