@@ -22,6 +22,10 @@ canvas {
   z-index: -1;
 }
 
+.hero.is-primary .title {
+  font-weight: bolder;
+}
+
 .footer {
   position: absolute;
   width: 100%;
