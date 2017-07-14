@@ -68,7 +68,9 @@ app.ws('/', (ws, req) => {
 			text = parsedMsg.text;
 		} else {
 			const blobDuration = duration;
+			const currentText = text;
 			duration = undefined;
+			text = undefined;
 
 			try {
 				const speakerIds = speakers.map(s => s.id);
@@ -83,8 +85,8 @@ app.ws('/', (ws, req) => {
 				ws.send(JSON.stringify(state));
 				// Send keyphrases in a second state message
 				if (speeches[speakerId] !== undefined) { // If speaker identified, send it
-					speeches[speakerId] += ` ${text}.`;
-					speakerState.lastphrase = text;
+					speeches[speakerId] += ` ${currentText}.`;
+					speakerState.lastphrase = currentText;
 
 					const keyphrases = await getKeyPhrases(speeches[speakerId], speakerId, 5);
 					speakerState.keyphrases = keyphrases;
