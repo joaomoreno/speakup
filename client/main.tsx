@@ -43,18 +43,11 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
     };
 
     draw();
-
-    setInterval(() => {
-      console.log(this.min, this.max);
-    }, 1000)
   }
 
   componentWillUnmount() {
     cancelAnimationFrame(this.animationFrameRequest);
   }
-
-  private min = Number.POSITIVE_INFINITY;
-  private max = Number.NEGATIVE_INFINITY;
 
   paint() {
     const frequencyData = this.props.microphone.getFloatFrequencyData();
@@ -195,6 +188,9 @@ class App extends React.Component<AppProps, AppState> {
             <h1 className="title">
               Speakup!
             </h1>
+            <h2 className="subtitle">
+              One Week Microsoft 2017 Hackathon Zürich SDC
+            </h2>
           </div>
         </div>
       </section>
