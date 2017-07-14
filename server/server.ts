@@ -68,8 +68,6 @@ app.ws('/', (ws, req) => {
 			const parsedMsg = JSON.parse(msg);
 			duration = parsedMsg.duration;
 			text = parsedMsg.text;
-			console.log('Text:', text);
-			console.log(msg);
 		} else {
 			const blobDuration = duration;
 			duration = undefined;
@@ -85,10 +83,13 @@ app.ws('/', (ws, req) => {
 				}
 
 				ws.send(JSON.stringify(state));
-				// Send keyphrases in a second state message ws.send(JSON.stringify(state));
-				const keyphrases = await getKeyPhrases(text, speakerId, 5);
-				speakerState.keyphrases = keyphrases;
-				ws.send(JSON.stringify(state));
+				// Send keyphrases in a second state message
+				if (speeches[speakerId] !== undefined) { // If speaker identified, send it 
+					speeches[speakerId] === '' ? text : `${speeches[speakerId]}. ${text}`;
+					const keyphrases = await getKeyPhrases(text, speakerId, 5);
+					speakerState.keyphrases = keyphrases;
+					ws.send(JSON.stringify(state));
+				}
 			} catch (e) {
 				if (/not opened/.test(e.message)) {
 					return;

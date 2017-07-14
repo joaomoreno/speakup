@@ -24,7 +24,6 @@ export function getKeyPhrases(text: string, speakerId: string, top: number): Pro
         },
         body: JSON.stringify(doc)
     };
-    // console.log(doc);
 
     return new Promise<string[]>((res, rej) => {
         request(options, (error, response, body) => {
@@ -33,10 +32,16 @@ export function getKeyPhrases(text: string, speakerId: string, top: number): Pro
             }
 
             const result = JSON.parse(body);
-            // console.log(result);
 
             if (result.documents && result.documents[0] && result.documents[0].keyPhrases) {
+                const keyPhrases = result.documents[0].keyPhrases;
+                if (keyPhrases === [] || keyPhrases === '') {
+                    return rej();
+                }
+                console.log('Keyphrases received : ' + keyPhrases);
                 return res(result.documents[0].keyPhrases.slice(0, top));
+            } else {
+                return rej(result);
             }
         });
     });

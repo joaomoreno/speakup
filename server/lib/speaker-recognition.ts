@@ -40,6 +40,10 @@ export async function identifySpeaker(audio: Buffer, identificationProfileIds: s
 				return rej(`Identification failed or no speaker identified. ${result.message}`);
 			}
 
+			if (!result.processingResult && !result.processingResult.confidence) {
+				return rej('No processing result or confidence level received');
+			}
+
 			if (result.processingResult.confidence === 'Low') {
 				return res(unknownId);
 			}
