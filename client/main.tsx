@@ -24,6 +24,7 @@ interface Model {
 
 declare const RecordRTC;
 declare const StereoAudioRecorder;
+declare const moment;
 
 type SpectrumAnalyzerProps = {
   microphone: Microphone,
@@ -145,6 +146,13 @@ class App extends React.Component<AppProps, AppState> {
 
         this.startRecording(speechService.onSpeechPaused);
       });
+
+    const start = new Date();
+    setInterval(() => {
+      const millis = new Date().getTime() - start.getTime();
+      const duration = moment.duration(millis, 'ms');
+      (this.refs.timer as HTMLElement).textContent = `${Math.floor(duration.asMinutes())}:${duration.seconds()}`;
+    }, 1000);
   }
 
   private startRecording(onSpeechEnded: Event<string>) {
@@ -188,6 +196,7 @@ class App extends React.Component<AppProps, AppState> {
           <div className="container">
             <h1 className="title">
               Speakup!
+              <span ref="timer" style={{ float: "right" }} ></span>
             </h1>
             <h2 className="subtitle">
               One Week Microsoft 2017 Hackathon Zürich SDC
@@ -217,8 +226,11 @@ class App extends React.Component<AppProps, AppState> {
               {
                 speakerStates.map(s => {
                   const seconds = Math.round(s.time / 1000);
+                  const duration = moment.duration(seconds, 'seconds');
                   const percentage = Math.min(seconds / 60 * 100, 100);
                   const progressType = percentage >= 100 ? 'is-danger' : percentage >= 50 ? 'is-warning' : 'is-info';
+
+                  console.log(moment.duration(seconds, 'seconds'));
 
                   return [
                     <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
@@ -241,7 +253,7 @@ class App extends React.Component<AppProps, AppState> {
                       <td>
                         <progress className={`progress ${progressType}`} value={percentage} max="100"></progress>
                       </td>
-                      <td>{seconds} s</td>
+                      <td>{Math.floor(duration.asMinutes())}:{duration.seconds()}</td>
                     </tr>
                   ];
                 })

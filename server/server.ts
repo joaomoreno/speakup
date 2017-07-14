@@ -3,7 +3,7 @@ import * as ws from 'express-ws';
 import { identifySpeaker } from "./lib/speaker-recognition";
 import { getKeyPhrases } from "./lib/text-analytics";
 
-const showJohnDoe = true;
+const showJohnDoe = false;
 
 interface Speaker {
 	name: string;
