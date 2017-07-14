@@ -199,13 +199,15 @@ class App extends React.Component<AppProps, AppState> {
         <div className="container">
           <table className="table">
             <colgroup>
-              <col span={1} style={{ width: '35%' }} />
-              <col span={1} style={{ width: '50%' }} />
               <col span={1} style={{ width: '15%' }} />
+              <col span={1} style={{ width: '45%' }} />
+              <col span={1} style={{ width: '30%' }} />
+              <col span={1} style={{ width: '10%' }} />
             </colgroup>
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Keywords</th>
                 <th>Progress</th>
                 <th>Duration</th>
               </tr>
@@ -219,6 +221,9 @@ class App extends React.Component<AppProps, AppState> {
 
                   return <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
                     <th>{s.speaker.name}</th>
+                    <th>
+                      <span className="tag is-light">Primary</span>
+                    </th>
                     <td>
                       <progress className={`progress ${progressType}`} value={percentage} max="100"></progress>
                     </td>

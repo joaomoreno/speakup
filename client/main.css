@@ -33,3 +33,7 @@ canvas {
 .section, .table {
   background-color: transparent;
 }
+
+.tag {
+  font-size: 10px;
+}
