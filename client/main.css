@@ -28,6 +28,7 @@ canvas {
   bottom: 0;
   padding: 20px;
   font-size: xx-large;
+  background-color: rgba(245, 245, 245, 0.5);
 }
 
 .section, .table {
