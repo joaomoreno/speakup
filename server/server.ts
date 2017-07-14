@@ -14,6 +14,7 @@ interface SpeakerState {
 	speaker: Speaker;
 	time: number;
 	keyphrases: string[];
+	lastphrase: string;
 }
 
 interface State {
@@ -26,11 +27,11 @@ const speakers = require('../people.json') as Speaker[];
 
 function createInitialState(speakers: Speaker[]): State {
 	const speakerStates = [
-		...speakers.map(speaker => ({ speaker, time: 0, keyphrases: [] }))
+		...speakers.map(speaker => ({ speaker, time: 0, keyphrases: [], lastphrase: '' }))
 	];
 
 	if (showJohnDoe) {
-		speakerStates.push({ speaker: { id: unknownId, name: 'John Doe' }, time: 0, keyphrases: [] });
+		speakerStates.push({ speaker: { id: unknownId, name: 'John Doe' }, time: 0, keyphrases: [], lastphrase: '' });
 	}
 
 	return {
@@ -83,6 +84,7 @@ app.ws('/', (ws, req) => {
 				// Send keyphrases in a second state message
 				if (speeches[speakerId] !== undefined) { // If speaker identified, send it
 					speeches[speakerId] += ` ${text}.`;
+					speakerState.lastphrase = text;
 
 					const keyphrases = await getKeyPhrases(speeches[speakerId], speakerId, 5);
 					speakerState.keyphrases = keyphrases;
