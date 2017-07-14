@@ -13,6 +13,7 @@ interface Speaker {
 interface SpeakerState {
   speaker: Speaker;
   time: number;
+  lastphrase: string;
   keyphrases: string[];
 }
 
@@ -200,16 +201,16 @@ class App extends React.Component<AppProps, AppState> {
           <table className="table">
             <colgroup>
               <col span={1} style={{ width: '20%' }} />
-              <col span={1} style={{ width: '40%' }} />
-              <col span={1} style={{ width: '30%' }} />
-              <col span={1} style={{ width: '10%' }} />
+              <col span={1} style={{ width: '50%' }} />
+              <col span={1} style={{ width: '25%' }} />
+              <col span={1} style={{ width: '5%' }} />
             </colgroup>
             <thead>
               <tr>
                 <th>Name</th>
                 <th>Keywords</th>
                 <th>Progress</th>
-                <th>Duration</th>
+                <th>Time</th>
               </tr>
             </thead>
             <tbody>
@@ -219,23 +220,30 @@ class App extends React.Component<AppProps, AppState> {
                   const percentage = Math.min(seconds / 60 * 100, 100);
                   const progressType = percentage >= 100 ? 'is-danger' : percentage >= 50 ? 'is-warning' : 'is-info';
 
-                  return <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
-                    <th>
-                      <figure className="avatar image is-24x24">
-                        {
-                          s.speaker.github ? <img src={`https://avatars1.githubusercontent.com/u/${s.speaker.github}?v=3&s=72`} /> : null
-                        }
-                      </figure>
-                      {s.speaker.name}
-                    </th>
-                    <th>{s.keyphrases.map(k => <span className="tag is-light">{k}</span>)}</th>
-                    <td>
-                      <progress className={`progress ${progressType}`} value={percentage} max="100"></progress>
-                    </td>
-                    <td>
-                      {seconds} s
-                    </td>
-                  </tr>
+                  return [
+                    <tr className={s.speaker.id === this.state.model.lastSpeakerId ? "is-selected" : ""}>
+                      <th>
+                        <figure className="avatar image is-24x24">
+                          {
+                            s.speaker.github ? <img src={`https://avatars1.githubusercontent.com/u/${s.speaker.github}?v=3&s=72`} /> : null
+                          }
+                        </figure>
+                        {s.speaker.name}
+                      </th>
+                      <th>
+                        <div className="phrase">
+                          <span>{s.lastphrase || '\u00A0'}</span>
+                        </div>
+                        <div>
+                          {s.keyphrases.map(k => <span className="tag is-light">{k}</span>)}
+                        </div>
+                      </th>
+                      <td>
+                        <progress className={`progress ${progressType}`} value={percentage} max="100"></progress>
+                      </td>
+                      <td>{seconds} s</td>
+                    </tr>
+                  ];
                 })
               }
             </tbody>
