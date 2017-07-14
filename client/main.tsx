@@ -159,9 +159,14 @@ class App extends React.Component<AppProps, AppState> {
 
     onSpeechEnded(() => {
       const duration = new Date().getTime() - startTime;
+      const text = '';
 
       recorder.stopRecording(() => {
-        socket.send(String(duration));
+        const data = {
+          duration,
+          text
+        };
+        socket.send(JSON.stringify(data));
         socket.send(recorder.getBlob());
       });
 

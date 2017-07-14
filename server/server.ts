@@ -42,10 +42,13 @@ app.ws('/', (ws, req) => {
   ws.send(JSON.stringify(state));
 
   let duration: number | undefined = undefined;
+  let text: string | undefined = undefined;
 
   ws.on('message', async msg => {
     if (duration === undefined) {
-      duration = parseInt(msg);
+      const parsedMsg = JSON.parse(msg);
+      duration = parsedMsg.duration;
+      text = parsedMsg.text;
     } else {
       const blobDuration = duration;
       duration = undefined;
