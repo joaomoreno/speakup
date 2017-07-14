@@ -21,14 +21,8 @@ interface State {
 	lastSpeakerId: string | undefined;
 }
 
-interface SpeakerText {
-	[key: string]: string;
-}
-
 export const unknownId = '00000000-0000-0000-0000-000000000000';
 const speakers = require('../people.json') as Speaker[];
-let speeches: SpeakerText = {};
-createInitialSpeeches(speakers);
 
 function createInitialState(speakers: Speaker[]): State {
 	const speakerStates = [
@@ -45,10 +39,12 @@ function createInitialState(speakers: Speaker[]): State {
 	};
 }
 
-function createInitialSpeeches(speakers: Speaker[]): void {
-	speakers.map(speaker => {
-		speeches[speaker.id] = '';
-	});
+interface Speeches {
+	[key: string]: string;
+}
+
+function createInitialSpeeches(speakers: Speaker[]): Speeches {
+	return speakers.reduce((r, s) => ({ ...r, [s.id]: '' }), {});
 }
 
 const app = express();
@@ -57,6 +53,7 @@ ws(app);
 app.use(express.static(__dirname + '/..'));
 
 app.ws('/', (ws, req) => {
+	const speeches = createInitialSpeeches(speakers);
 	const state = createInitialState(speakers);
 	ws.send(JSON.stringify(state));
 
@@ -84,7 +81,7 @@ app.ws('/', (ws, req) => {
 
 				ws.send(JSON.stringify(state));
 				// Send keyphrases in a second state message
-				if (speeches[speakerId] !== undefined) { // If speaker identified, send it 
+				if (speeches[speakerId] !== undefined) { // If speaker identified, send it
 					speeches[speakerId] === '' ? text : `${speeches[speakerId]}. ${text}`;
 					const keyphrases = await getKeyPhrases(text, speakerId, 5);
 					speakerState.keyphrases = keyphrases;
