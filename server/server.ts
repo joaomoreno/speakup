@@ -2,6 +2,8 @@ import * as express from 'express';
 import * as ws from 'express-ws';
 import { identifySpeaker } from "./lib/speaker-recognition";
 
+const showJohnDoe = true;
+
 interface Speaker {
   name: string;
   id: string;
@@ -21,11 +23,16 @@ interface State {
 export const unknownId = '00000000-0000-0000-0000-000000000000';
 
 function createInitialState(speakers: Speaker[]): State {
+  const speakerStates = [
+    ...speakers.map(speaker => ({ speaker, time: 0, keyphrases: [] }))
+  ];
+
+  if (showJohnDoe) {
+    speakerStates.push({ speaker: { id: unknownId, name: 'John Doe' }, time: 0, keyphrases: [] });
+  }
+
   return {
-    speakers: [
-      ...speakers.map(speaker => ({ speaker, time: 0, keyphrases: [] })),
-      { speaker: { id: unknownId, name: 'John Doe' }, time: 0, keyphrases: [] }
-    ],
+    speakers: speakerStates,
     lastSpeakerId: undefined
   };
 }

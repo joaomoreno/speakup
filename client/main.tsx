@@ -4,8 +4,6 @@ import { Event, Emitter } from './util';
 import { Microphone } from './audio';
 import { SpeechToTextService } from './speechService';
 
-const hideJohnDoe = false;
-
 interface Speaker {
   name: string;
   id: string;
@@ -74,7 +72,7 @@ class SpectrumAnalyzer extends React.Component<SpectrumAnalyzerProps> {
     for (var i = 0; i < frequencyData.length; i++) {
       const value = Math.max(frequencyData[i] + 120, 0);
       const barHeight = value * this.props.height / 140;
-      const y = this.props.height - barHeight;
+      const y = this.props.height - barHeight - 20;
 
       ctx.lineTo(x, y);
       x += barWidth + 1;
@@ -173,11 +171,6 @@ class App extends React.Component<AppProps, AppState> {
 
     socket.addEventListener('message', e => {
       const model = JSON.parse(e.data) as Model;
-
-      if (hideJohnDoe) {
-        model.speakers = model.speakers.filter(s => s.speaker.name !== 'John Doe');
-      }
-
       this.setState({ ...this.state, model });
     });
   }
