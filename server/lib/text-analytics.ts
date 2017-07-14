@@ -35,11 +35,7 @@ export function getKeyPhrases(text: string, speakerId: string, top: number): Pro
 
 			if (result.documents && result.documents[0] && result.documents[0].keyPhrases) {
 				const keyPhrases = result.documents[0].keyPhrases;
-				if (keyPhrases === [] || keyPhrases === '') {
-					return rej();
-				}
-				console.log('Keyphrases received : ' + keyPhrases);
-				return res(result.documents[0].keyPhrases.slice(0, top));
+				return res(keyPhrases.filter(phrase => phrase !== '').slice(0, top));
 			} else {
 				return rej(result);
 			}
