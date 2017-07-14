@@ -27,23 +27,22 @@ interface SpeakerText {
 
 export const unknownId = '00000000-0000-0000-0000-000000000000';
 const speakers = require('../people.json') as Speaker[];
-const state = createInitialState(speakers);
 let speeches: SpeakerText = {};
 createInitialSpeeches(speakers);
 
 function createInitialState(speakers: Speaker[]): State {
-  const speakerStates = [
-    ...speakers.map(speaker => ({ speaker, time: 0, keyphrases: [] }))
-  ];
+	const speakerStates = [
+		...speakers.map(speaker => ({ speaker, time: 0, keyphrases: [] }))
+	];
 
-  if (showJohnDoe) {
-    speakerStates.push({ speaker: { id: unknownId, name: 'John Doe' }, time: 0, keyphrases: [] });
-  }
+	if (showJohnDoe) {
+		speakerStates.push({ speaker: { id: unknownId, name: 'John Doe' }, time: 0, keyphrases: [] });
+	}
 
-  return {
-    speakers: speakerStates,
-    lastSpeakerId: undefined
-  };
+	return {
+		speakers: speakerStates,
+		lastSpeakerId: undefined
+	};
 }
 
 function createInitialSpeeches(speakers: Speaker[]): void {
@@ -58,6 +57,7 @@ ws(app);
 app.use(express.static(__dirname + '/..'));
 
 app.ws('/', (ws, req) => {
+	const state = createInitialState(speakers);
 	ws.send(JSON.stringify(state));
 
 	let duration: number | undefined = undefined;
