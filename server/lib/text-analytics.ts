@@ -6,12 +6,12 @@ try {
     throw new Error('Please add `taKey` to devenv.json.');
 }
 
-export function getKeyPhrases(text: string, author: string, top: number) {
+export function getKeyPhrases(text: string, speakerId: string, top: number): Promise<string[]> {
     const doc = {
         "documents": [
             {
                 "language": "en",
-                "id": author,
+                "id": speakerId,
                 "text": text
             }
         ]
@@ -24,18 +24,19 @@ export function getKeyPhrases(text: string, author: string, top: number) {
         },
         body: JSON.stringify(doc)
     };
+    // console.log(doc);
 
-    return new Promise((res, rej) => {
+    return new Promise<string[]>((res, rej) => {
         request(options, (error, response, body) => {
             if (error) {
                 return rej(error);
             }
 
             const result = JSON.parse(body);
-            console.log(result);
+            // console.log(result);
 
             if (result.documents && result.documents[0] && result.documents[0].keyPhrases) {
-                return result.documents[0].keyPhrases.slice(0, top);
+                return res(result.documents[0].keyPhrases.slice(0, top));
             }
         });
     });
