@@ -79,6 +79,7 @@ app.ws('/', (ws, req) => {
 
 				if (speakerState) {
 					speakerState.time += blobDuration;
+					speakerState.lastphrase = currentText;
 					state.lastSpeakerId = speakerId;
 				}
 
@@ -86,7 +87,6 @@ app.ws('/', (ws, req) => {
 				// Send keyphrases in a second state message
 				if (speeches[speakerId] !== undefined) { // If speaker identified, send it
 					speeches[speakerId] += ` ${currentText}.`;
-					speakerState.lastphrase = currentText;
 
 					const keyphrases = await getKeyPhrases(speeches[speakerId], speakerId, 5);
 					speakerState.keyphrases = keyphrases;
