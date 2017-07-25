@@ -241,7 +241,7 @@ class App extends React.Component<AppProps, AppState> {
                   let seconds;
                   seconds = secs < 10 ? `0${secs}` : secs;
 
-                  const percentage = Math.min(seconds / 60 * 100, 100);
+                  const percentage = Math.min(allSecs / 60 * 100, 100);
                   const progressType = percentage >= 100 ? 'is-danger' : percentage >= 50 ? 'is-warning' : 'is-info';
 
                   return [
